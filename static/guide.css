@@ -3,3 +3,19 @@ body {
   padding: 2rem;
   margin: auto;
 }
+
+.toc {
+  min-height: 3.58rem;
+  position: relative;
+  font-size: 0.9rem;
+  border-radius: 10px;
+  list-style: none;
+}
+
+.toc * ul {
+  list-style: none;
+}
+
+.toc * a {
+  text-decoration: none;
+}

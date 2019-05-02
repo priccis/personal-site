@@ -7,8 +7,123 @@
 <script>hljs.initHighlightingOnLoad();</script>
 <body>
   <h1>Android development in Kolin</h1>
-  <h2>Kotlin</h2>
-<ul>
+  <h4>Table Of Contents</h4>
+  <ul class="toc">
+  
+    <li>
+      <a href="#kotlin">Kotlin</a>
+      
+    </li>
+  
+    <li>
+      <a href="#activity">Activity</a>
+      
+        <ul>
+    <li>
+      <a href="#intents">Intents</a>
+      
+    </li>
+  
+    <li>
+      <a href="#lifecycle">Lifecycle</a>
+      
+    </li>
+  </ul>
+      
+    </li>
+  
+    <li>
+      <a href="#fragments">Fragments</a>
+      
+        <ul>
+    <li>
+      <a href="#lifecycle">Lifecycle</a>
+      
+    </li>
+  
+    <li>
+      <a href="#communication">Communication</a>
+      
+        <ul>
+    <li>
+      <a href="#fragment-activity">Fragment - Activity</a>
+      
+    </li>
+  
+    <li>
+      <a href="#activity-fragment:-passing-arguments">Activity - Fragment: Passing arguments</a>
+      
+    </li>
+  
+    <li>
+      <a href="#fragment-fragment:-view-model">Fragment - Fragment: View Model</a>
+      
+    </li>
+  </ul>
+      
+    </li>
+  
+    <li>
+      <a href="#configuration-changes">Configuration Changes</a>
+      
+    </li>
+  </ul>
+      
+    </li>
+  
+    <li>
+      <a href="#services">Services</a>
+      
+    </li>
+  
+    <li>
+      <a href="#lifecycle">Lifecycle</a>
+      
+    </li>
+  
+    <li>
+      <a href="#start-a-service-from-an-activity">Start a service from an Activity</a>
+      
+    </li>
+  
+    <li>
+      <a href="#recyclerview">RecyclerView</a>
+      
+        <ul>
+    <li>
+      <a href="#adapter">Adapter</a>
+      
+        <ul>
+    <li>
+      <a href="#viewholder">ViewHolder</a>
+      
+    </li>
+  </ul>
+      
+    </li>
+  </ul>
+      
+    </li>
+  
+    <li>
+      <a href="#backstack">BackStack</a>
+      
+    </li>
+  
+    <li>
+      <a href="#room">Room</a>
+      
+        <ul>
+    <li>
+      <a href="#migration">Migration</a>
+      
+    </li>
+  </ul>
+      
+    </li>
+  
+  </ul>
+  <h2 id="kotlin">Kotlin</h2><ul>
 <li><p>Companion object:</p>
 <ul>
 <li><blockquote><p>Unlike C# or Java, Kotlin doesn't have <code>static</code> members and methods</p>
@@ -45,15 +160,12 @@ original.let {
 </code></pre>
 </li>
 </ul>
-<h2>Activity</h2>
-<h3>Intents</h3>
-<pre><code class="lang-kotlin">val intent = Intent(this, QuestionsActivity::class.java)
+<h2 id="activity">Activity</h2><h3 id="intents">Intents</h3><pre><code class="lang-kotlin">val intent = Intent(this, QuestionsActivity::class.java)
 intent.putExtra(EXTRA_SURVEY_POSITION, surveyPosition)
 intent.putExtra(EXTRA_SURVEY_ID, surveyId)
 startActivity(intent)
 </code></pre>
-<h3>Lifecycle</h3>
-<ul>
+<h3 id="lifecycle">Lifecycle</h3><ul>
 <li>onCreate()<ul>
 <li>Created but not yet visible</li>
 </ul>
@@ -84,11 +196,7 @@ startActivity(intent)
 </ul>
 </li>
 </ul>
-<h2>Fragments</h2>
-<h3>Lifecycle</h3>
-<h3>Communication</h3>
-<h4>Fragment - Activity</h4>
-<blockquote><p>Callback:</p>
+<h2 id="fragments">Fragments</h2><h3 id="lifecycle">Lifecycle</h3><h3 id="communication">Communication</h3><h4 id="fragment-activity">Fragment - Activity</h4><blockquote><p>Callback:</p>
 <ul>
 <li>Hollywood principle: "Don't call us, we'll call you!"</li>
 </ul>
@@ -120,8 +228,7 @@ override fun onAttach(context: Context) {
 </code></pre>
 </li>
 </ul>
-<h4>Activity - Fragment: Passing arguments</h4>
-<ul>
+<h4 id="activity-fragment:-passing-arguments">Activity - Fragment: Passing arguments</h4><ul>
 <li><p>We can create a Bundle in the activity, put object in it and then, before inflating a fragment, pass the bundle as arguments</p>
 <pre><code class="lang-kotlin">// In the Activity
 val argumentToPass : Bundle = Bundle()
@@ -162,10 +269,8 @@ override fun onCreate(savedInstanceState: Bundle?) {
 </code></pre>
 </li>
 </ul>
-<h4>Fragment - Fragment: View Model</h4>
-<p>Todo</p>
-<h3>Configuration Changes</h3>
-<p>When, for example, the orientation of the screen changes, we loose connection with the fragment, to avoid this, we should do one of these:</p>
+<h4 id="fragment-fragment:-view-model">Fragment - Fragment: View Model</h4><p>Todo</p>
+<h3 id="configuration-changes">Configuration Changes</h3><p>When, for example, the orientation of the screen changes, we loose connection with the fragment, to avoid this, we should do one of these:</p>
 <ul>
 <li><p>Reference fragment by tag</p>
 <pre><code class="lang-kotlin">var fragment1: AFragmentClass? = supportFragmentManager.findFragmentByTag(&quot;Fragemnt tag&quot;) as AFragmentClass?
@@ -179,8 +284,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 </li>
 </ul>
 <p>When the user goes to another app and return, the fragment can also disappear, tho avoid this, call <a href="../../guides/android/#BackStack">addToBackStack</a> before committing the transaction.</p>
-<h2>Services</h2>
-<blockquote><p>Services don't provide any interface</p>
+<h2 id="services">Services</h2><blockquote><p>Services don't provide any interface</p>
 <p><strong>Always</strong> declare them in the manifest</p>
 <p>"Exported":  Can be called from outside</p>
 </blockquote>
@@ -190,16 +294,13 @@ override fun onCreate(savedInstanceState: Bundle?) {
 <li>Background</li>
 <li>Bound</li>
 </ul>
-<h4>Lifecycle</h4>
-<ul>
+<h4 id="lifecycle">Lifecycle</h4><ul>
 <li>OnCreate()</li>
 <li>OnStartCommand()</li>
 <li>OnBind()</li>
 <li>OnDestory()</li>
 </ul>
-<h4>Start a service from an Activity</h4>
-<h2>RecyclerView</h2>
-<blockquote><p>Like a <code>ListView</code> but more flexible and optimized.</p>
+<h4 id="start-a-service-from-an-activity">Start a service from an Activity</h4><h2 id="recyclerview">RecyclerView</h2><blockquote><p>Like a <code>ListView</code> but more flexible and optimized.</p>
 <p>The <a href="https://developer.android.com/guide/topics/ui/layout/recyclerview"><code>RecyclerView</code></a> fills itself with views provided by a <em>layout manager</em> that you provide.</p>
 <p>The views listed are represented by <em>view holders</em>. Each one of those is in charge of showing a single item with a view.</p>
 <p>It's important to understand that a a <em>RecyclerView</em> creates only as many <em>view holders</em> as are visible in the screen, plus a few more. When you scroll, it recycles the disappearing views and rebinds them to new data to show.</p>
@@ -208,8 +309,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 <ul>
 <li><a href="https://www.youtube.com/watch?v=sJ-Z9G0SDhc">How to filter a recyclerView</a></li>
 </ul>
-<h3>Adapter</h3>
-<blockquote><p>Manages the <em>view holder</em> objects. Creates them, and binds data to each one of them, as needed.</p>
+<h3 id="adapter">Adapter</h3><blockquote><p>Manages the <em>view holder</em> objects. Creates them, and binds data to each one of them, as needed.</p>
 <p>Extends <code>RecyclerView.Adapter&lt;T&gt;</code> where the T is a <code>RecyclerView.ViewHolder</code> that is usually implemented inside the adapter class as an <code>inner class</code>.</p>
 <p>In the class, you have to override at least these 3 methods:</p>
 <ul>
@@ -218,11 +318,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 <li><code>getItemCount: Int</code></li>
 </ul>
 </blockquote>
-<h4>ViewHolder</h4>
-<h2>BackStack</h2>
-<h2>Room</h2>
-<h3>Migration</h3>
-<ul>
+<h4 id="viewholder">ViewHolder</h4><h2 id="backstack">BackStack</h2><h2 id="room">Room</h2><h3 id="migration">Migration</h3><ul>
 <li><a href="https://code.luasoftware.com/tutorials/android/android-room-database-migration/">How to make a migration</a></li>
 <li><a href="https://medium.com/androiddevelopers/understanding-migrations-with-room-f01e04b07929">Understanding migrations</a></li>
 </ul>
