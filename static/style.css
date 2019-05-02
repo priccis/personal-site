@@ -40,3 +40,12 @@ header nav ul li {
 div.page {
     background: #e5e8e9;
 }
+
+.meta {
+    margin-top: -15px;
+    font-size: 70%;
+}
+
+.pagination {
+    padding-top: 25px;
+}
