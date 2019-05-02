@@ -1,0 +1,250 @@
+<!doctype html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../static/guide.css">
+<link rel="stylesheet" href="../../static/github.css">
+<link rel="stylesheet" href="../../static/styles/androidstudio.css">
+<script src="../../static/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<body>
+  <h1>Android development in Kolin</h1>
+  <h2>Kotlin</h2>
+<ul>
+<li><p>Companion object:</p>
+<ul>
+<li><blockquote><p>Unlike C# or Java, Kotlin doesn't have <code>static</code> members and methods</p>
+</blockquote>
+</li>
+<li><p>It's like a singleton class living inside another class.</p>
+</li>
+<li><p>Its members are accessed directly by its defining class</p>
+</li>
+</ul>
+</li>
+<li><p>Elvis operator</p>
+<pre><code class="lang-kotlin">// This:
+val l: Int = if (b != null) b.length else -1
+// Is equal to this:
+val l = b?.length ?: -1
+</code></pre>
+</li>
+<li><p><a href="https://play.kotlinlang.org/byExample/06_scope_functions">Scope functions</a></p>
+<ul>
+<li><a href="https://medium.com/@elye.project/mastering-kotlin-standard-functions-run-with-let-also-and-apply-9cd334b0ef84"><code>with, let, also, run, apply</code></a></li>
+</ul>
+<pre><code class="lang-kotlin">val original = &quot;abc&quot;
+// Evolve the value and send to the next chain
+original.let {
+    println(&quot;The original String is $it&quot;) // &quot;abc&quot;
+    it.reversed() // evolve it as parameter to send to next let
+}.let {
+    println(&quot;The reverse String is $it&quot;) // &quot;cba&quot;
+    it.length  // can be evolve to other type
+}.let {
+    println(&quot;The length of the String is $it&quot;) // 3
+}
+</code></pre>
+</li>
+</ul>
+<h2>Activity</h2>
+<h3>Intents</h3>
+<pre><code class="lang-kotlin">val intent = Intent(this, QuestionsActivity::class.java)
+intent.putExtra(EXTRA_SURVEY_POSITION, surveyPosition)
+intent.putExtra(EXTRA_SURVEY_ID, surveyId)
+startActivity(intent)
+</code></pre>
+<h3>Lifecycle</h3>
+<ul>
+<li>onCreate()<ul>
+<li>Created but not yet visible</li>
+</ul>
+</li>
+<li>onStart()<ul>
+<li>Activity becomes visible</li>
+</ul>
+</li>
+<li>onResume()<ul>
+<li>Activity is visible and in foreground</li>
+<li>The user can interact</li>
+<li>If, for example, we added a new item (e.g. a comment) and go back to a parent activity listing items (e.g. all comments on a post) we should update the list with the new item. We do this here on <code>onResume</code> with <code>Adapter.notifyDataSetChanged()</code></li>
+</ul>
+</li>
+<li>onPause()<ul>
+<li>User can't interact with the activity, maybe because another activity is on top.</li>
+<li>If the activity becomes interactive again, <code>onResume</code> is called</li>
+<li>Here is where we should save any new or modified data</li>
+</ul>
+</li>
+<li>onStop()<ul>
+<li>Activity no longer visible</li>
+<li>When the activity becomes visible again, <code>onRestart</code> is called again</li>
+</ul>
+</li>
+<li>onDestroy()<ul>
+<li>Activity is shut down</li>
+</ul>
+</li>
+</ul>
+<h2>Fragments</h2>
+<h3>Lifecycle</h3>
+<h3>Communication</h3>
+<h4>Fragment - Activity</h4>
+<blockquote><p>Callback:</p>
+<ul>
+<li>Hollywood principle: "Don't call us, we'll call you!"</li>
+</ul>
+</blockquote>
+<ul>
+<li><p>Fragments can call methods of the activity. Since the fragment doesn't know which methods the activity has, it defines an Interface that the activity must implement. Then, the fragment can call those methods  defined by the interface contract.</p>
+<pre><code class="lang-kotlin">// Inside the fragment class
+interface OnFragmentInteractionListener {
+    fun onFragmentInteraction(message: String)
+}
+</code></pre>
+<pre><code class="lang-kotlin">// Inside the activity
+class MainActivity : AppCompatActivity(), TheFragment.OnOnFragmentInteractionListener {
+    override fun OnFragmentInteraction(message: String) {
+        // Do whatever is needed to do with the message
+    }
+}
+</code></pre>
+<pre><code class="lang-kotlin">// Inside the fragment class, check if the context (its activity) implemented
+// the interface.
+override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OnFragmentInteractionListener) {
+            listener = context
+        } else {
+            throw RuntimeException(context.toString() + &quot; must implement OnFragmentInteractionListener&quot;)
+        }
+    }
+</code></pre>
+</li>
+</ul>
+<h4>Activity - Fragment: Passing arguments</h4>
+<ul>
+<li><p>We can create a Bundle in the activity, put object in it and then, before inflating a fragment, pass the bundle as arguments</p>
+<pre><code class="lang-kotlin">// In the Activity
+val argumentToPass : Bundle = Bundle()
+argumentToPass.putString(&quot;AKey&quot;, &quot;String being passed&quot;)
+fragmentInstance.arguments = argumentToPass
+// then inflate fragmentInstance
+</code></pre>
+<pre><code class="lang-kotlin">// In the fragment. Anywhere, e.g. onCreateView
+val myBundle :Bundle? = arguments
+val textReceived = myBundle?.getString(&quot;AKey&quot;)
+</code></pre>
+</li>
+<li><p>Other way is using the <strong>Factory Method</strong>: Inside a fragment we include a companion object with a method called <em>newInstance</em> that can receive parameters.</p>
+<pre><code class="lang-kotlin">// In the fragment, in this example called ExampleFragment
+companion object {
+
+    @JvmStatic
+    fun newInstance(param1: String) =
+        ExampleFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_PARAM1, param1)
+            }
+        }
+}
+</code></pre>
+<pre><code class="lang-kotlin">// In the Activity
+val fragmentInstance : ExampleFragment = ExampleFragment.newInstance(&quot;String being passed&quot;)
+</code></pre>
+<pre><code class="lang-kotlin">// In the fragment
+private var param1: String? = null
+
+override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    arguments?.let {
+        param1 = it.getString(ARG_PARAM1)
+    }
+}
+</code></pre>
+</li>
+</ul>
+<h4>Fragment - Fragment: View Model</h4>
+<p>Todo</p>
+<h3>Configuration Changes</h3>
+<p>When, for example, the orientation of the screen changes, we loose connection with the fragment, to avoid this, we should do one of these:</p>
+<ul>
+<li><p>Reference fragment by tag</p>
+<pre><code class="lang-kotlin">var fragment1: AFragmentClass? = supportFragmentManager.findFragmentByTag(&quot;Fragemnt tag&quot;) as AFragmentClass?
+</code></pre>
+</li>
+</ul>
+<ul>
+<li><p>Reference fragment by id</p>
+<pre><code class="lang-kotlin">var fragment1: Fragment? = supportFragmentManager.findFragmentById(R.id.fragment_container) as Fragment?
+</code></pre>
+</li>
+</ul>
+<p>When the user goes to another app and return, the fragment can also disappear, tho avoid this, call <a href="../../guides/android/#BackStack">addToBackStack</a> before committing the transaction.</p>
+<h2>Services</h2>
+<blockquote><p>Services don't provide any interface</p>
+<p><strong>Always</strong> declare them in the manifest</p>
+<p>"Exported":  Can be called from outside</p>
+</blockquote>
+<p>Types:</p>
+<ul>
+<li>Foreground</li>
+<li>Background</li>
+<li>Bound</li>
+</ul>
+<h4>Lifecycle</h4>
+<ul>
+<li>OnCreate()</li>
+<li>OnStartCommand()</li>
+<li>OnBind()</li>
+<li>OnDestory()</li>
+</ul>
+<h4>Start a service from an Activity</h4>
+<h2>RecyclerView</h2>
+<blockquote><p>Like a <code>ListView</code> but more flexible and optimized.</p>
+<p>The <a href="https://developer.android.com/guide/topics/ui/layout/recyclerview"><code>RecyclerView</code></a> fills itself with views provided by a <em>layout manager</em> that you provide.</p>
+<p>The views listed are represented by <em>view holders</em>. Each one of those is in charge of showing a single item with a view.</p>
+<p>It's important to understand that a a <em>RecyclerView</em> creates only as many <em>view holders</em> as are visible in the screen, plus a few more. When you scroll, it recycles the disappearing views and rebinds them to new data to show.</p>
+<p>The view holders are managed by an <a href="../../guides/android/#adapter">adapter</a></p>
+</blockquote>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=sJ-Z9G0SDhc">How to filter a recyclerView</a></li>
+</ul>
+<h3>Adapter</h3>
+<blockquote><p>Manages the <em>view holder</em> objects. Creates them, and binds data to each one of them, as needed.</p>
+<p>Extends <code>RecyclerView.Adapter&lt;T&gt;</code> where the T is a <code>RecyclerView.ViewHolder</code> that is usually implemented inside the adapter class as an <code>inner class</code>.</p>
+<p>In the class, you have to override at least these 3 methods:</p>
+<ul>
+<li><code>onCreateViewHolder(): ViewHolder</code></li>
+<li><code>onBindViewHolder()</code></li>
+<li><code>getItemCount: Int</code></li>
+</ul>
+</blockquote>
+<h4>ViewHolder</h4>
+<h2>BackStack</h2>
+<h2>Room</h2>
+<h3>Migration</h3>
+<ul>
+<li><a href="https://code.luasoftware.com/tutorials/android/android-room-database-migration/">How to make a migration</a></li>
+<li><a href="https://medium.com/androiddevelopers/understanding-migrations-with-room-f01e04b07929">Understanding migrations</a></li>
+</ul>
+<pre><code class="lang-kotlin">// In the database class or maybe in a dedicated file e.g. Migrations.kt
+// Supposing we added a new column called &#39;photo&#39; to a entity with table name &#39;complaints&#39;
+val MIGRATION_1_2: Migration = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+       database.execSQL(&quot;ALTER TABLE complaints &quot;
+                + &quot; ADD COLUMN photo TEXT&quot;)
+    }
+}
+</code></pre>
+<pre><code class="lang-kotlin">// In the database builder
+val database = Room.databaseBuilder(app, AppDatabase::class.java, &quot;MyDb.db&quot;)
+        // addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+        .addMigrations(MIGRATION_2_3)
+        .build()
+</code></pre>
+<pre><code class="lang-kotlin">// In the database class, increase te version number
+@Database(entities = [Complaint::class, Comment::class], version = 3, exportSchema = false)
+public abstract class AppDatabase : RoomDatabase() {
+    ...
+</code></pre>
+
+</body>
